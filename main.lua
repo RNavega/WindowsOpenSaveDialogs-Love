@@ -200,11 +200,13 @@ function _makeOpenFileName(title, filterString, defaultFilter)
     -- ofn.lpstrFileTitle
     -- ofn.nMaxFileTitle
 
-    -- Doesn't seem to work.
-    --local defaultDirectory = 'C:\\Windows'
-    --wcharPtr = stringToWchar(defaultDirectory)
-    --ofn.lpstrInitialDir = wcharPtr
-    ofn.lpstrInitialDir = nil
+    -- Set the default directory. May be ignored, see the MSDN docs for lpstrInitialDir:
+    -- https://learn.microsoft.com/en-us/windows/win32/api/commdlg/ns-commdlg-openfilenamew#members
+    local defaultDirectory = (love.filesystem.isFused()
+                              and love.filesystem.getSourceBaseDirectory()
+                              or love.filesystem.getSource())
+    wcharPtr = stringToWchar(defaultDirectory:gsub('/', '\\'))
+    ofn.lpstrInitialDir = wcharPtr
 
     -- Dialog title.
     local wcharPtr = stringToWchar(title)
